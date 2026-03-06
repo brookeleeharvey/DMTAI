@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Hitchhiker's Guide to Hyperspace</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #050510;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      color: #d0c0f0;
+    }
+    #starfield {
+      position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 20% 50%, #0a0a2e 0%, #050510 50%, #000 100%);
+      pointer-events: none;
+    }
+    #stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(180,140,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 5%, rgba(140,180,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 25%, rgba(200,160,255,0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 10%, rgba(160,200,255,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 45% 80%, rgba(180,140,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 70%, rgba(140,180,255,0.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 15% 90%, rgba(200,160,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 60%, rgba(160,200,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5% 45%, rgba(180,140,255,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 55% 50%, rgba(220,180,255,0.6) 0%, transparent 100%);
+    }
+    #app {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 760px;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      padding: 0 16px;
+    }
+    #header { text-align: center; padding: 28px 8px 0; }
+    .tagline { font-size: 11px; letter-spacing: 0.25em; color: #7b5ea7; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+    h1 { font-size: clamp(22px, 5vw, 36px); font-weight: 900; background: linear-gradient(135deg, #c8a8ff 0%, #7b9fff 50%, #e8d0ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 6px; }
+    h2 { font-size: clamp(12px, 2.5vw, 16px); font-weight: 400; color: #6a5a8a; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, #3a2a5a, #7b5ea7, #3a2a5a, transparent); margin-bottom: 20px; }
+    #chat-window { flex: 1; display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
+    #suggestions { margin-top: 16px; }
+    #suggestions p { color: #6a5aaa; text-align: center; font-size: 13px; margin-bottom: 16px; letter-spacing: 0.05em; }
+    #suggestions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+    .suggestion-btn { background: rgba(60,40,100,0.25); border: 1px solid rgba(120,80,200,0.3); border-radius: 8px; color: #b090e0; padding: 10px 14px; font-size: 12px; cursor: pointer; text-align: left; line-height: 1.4; font-family: 'Courier New', monospace; letter-spacing: 0.02em; transition: all 0.2s; }
+    .suggestion-btn:hover { background: rgba(80,50,140,0.4); border-color: rgba(160,100,255,0.5); color: #d0b0ff; }
+    .message-row { display: flex; align-items: flex-start; }
+    .message-row.user { justify-content: flex-end; }
+    .message-row.assistant { justify-content: flex-start; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 4px; }
+    .avatar.assistant { background: linear-gradient(135deg, #3a1a6a, #7b5ea7); border: 1px solid rgba(160,100,255,0.4); margin-right: 8px; }
+    .avatar.user { background: linear-gradient(135deg, #1a1040, #3a2060); border: 1px solid rgba(100,70,180,0.4); color: #8060c0; font-size: 11px; margin-left: 8px; }
+    .bubble { max-width: 80%; padding: 12px 16px; font-size: 13px; line-height: 1.7; letter-spacing: 0.02em; white-space: pre-wrap; }
+    .bubble.user { border-radius: 16px 16px 4px 16px; background: linear-gradient(135deg, rgba(80,50,140,0.6), rgba(60,30,120,0.5)); border: 1px solid rgba(160,100,255,0.35); color: #e0d0ff; }
+    .bubble.assistant { border-radius: 16px 16px 16px 4px; background: rgba(20,15,40,0.7); border: 1px solid rgba(80,60,130,0.4); color: #c8b8e8; }
+    #input-area { width: 100%; padding: 16px 0; position: sticky; bottom: 0; background: linear-gradient(to top, #050510 60%, transparent); }
+    #input-box { display: flex; gap: 10px; background: rgba(20,15,40,0.85); border: 1px solid rgba(120,80,200,0.4); border-radius: 12px; padding: 4px 4px 4px 16px; backdrop-filter: blur(10px); }
+    #user-input { flex: 1; background: transparent; border: none; outline: none; color: #d0c0f0; font-size: 13px; font-family: 'Courier New', monospace; letter-spacing: 0.02em; }
+    #send-btn { background: linear-gradient(135deg, #5a3a9a, #8b5ea7); border: none; border-radius: 9px; color: #e0d0ff; padding: 10px 18px; font-size: 13px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 0.05em; transition: all 0.2s; white-space: nowrap; }
+    #send-btn:disabled { background: rgba(60,40,100,0.3); color: #4a3a6a; cursor: not-allowed; }
+    #footer-note { text-align: center; margin-top: 10px; font-size: 10px; color: #3a2a5a; letter-spacing: 0.15em; }
+  </style>
+</head>
+<body>
+<div id="starfield"></div>
+<div id="stars"></div>
+<div id="app">
+  <div id="header">
+    <div class="tagline">&#9672; DON'T PANIC &#9672;</div>
+    <h1>THE HITCHHIKER'S GUIDE</h1>
+    <h2>to Hyperspace</h2>
+    <div class="divider"></div>
+  </div>
+  <div id="chat-window">
+    <div id="suggestions">
+      <p>Ask anything about the guide — extraction, vaping methods, MAOI, dosing, and more.</p>
+      <div id="suggestions-grid"></div>
+    </div>
+  </div>
+  <div id="input-area">
+    <div id="input-box">
+      <input id="user-input" type="text" placeholder="Ask about the guide..." />
+      <button id="send-btn">LAUNCH &#9656;</button>
+    </div>
+    <div id="footer-note">FOR EDUCATIONAL &amp; INFORMATIONAL PURPOSES ONLY</div>
+  </div>
+</div>
+
+<script>
+var KNOWLEDGE = [
+  {
+    keywords: ["dmt","dimethyltryptamine","what is dmt","psychedelic","alkaloid","serotonin","entities","machine elves","ayahuasca","effects","experience","trip","effect","feel"],
+    title: "N,N-Dimethyltryptamine (DMT)",
+    content: "DMT is a psychedelic alkaloid that induces profound altered states. Similar to serotonin, it binds to 5-HT2A receptors, conjuring vivid visions of geometric shapes, otherworldly entities, and alien landscapes.\n\nWhen inhaled as vapor, it surges across the blood-brain barrier in seconds, peaking within five minutes and usually fading by fifteen. Users frequently describe encounters with intelligent entities (machine elves, insectoid beings, reptiles, or aliens).\n\nDMT has been used in indigenous Amazonian cultures for centuries, brewed as ayahuasca for spiritual ceremonies."
+  },
+  {
+    keywords: ["mimosa","mhrb","mimosa hostilis","root bark","source","supplier","primebark","mimosaroot","acacia","psychotria","where to get","buy","purchase"],
+    title: "Mimosa Hostilis (MHRB)",
+    content: "Mimosa hostilis root bark (MHRB) is the primary source for DMT extraction. It has a DMT concentration of 1-2%, surpassing alternatives like Acacia confusa or Psychotria viridis.\n\nMHRB is available powdered, shredded, or whole bark. The extraction uses powdered bark; shredded bark can be ground at home or blended after acidification.\n\nRecommended suppliers:\n- PrimeBark: primebark.com\n- MimosaRoot: mimosaroot.com"
+  },
+  {
+    keywords: ["materials","supplies","equipment","what do i need","needed","vinegar","sodium hydroxide","naphtha","heptane","gloves","list","require","ingredients"],
+    title: "Extraction — Required Materials",
+    content: "Required materials for extracting DMT from 100g MHRB:\n\n- Powdered MHRB (100g)\n- Nitrile gloves & eye protection\n- Regular white 5% vinegar (200-300 mL)\n- Small mason jar & small funnel\n- Table salt / sodium chloride (200g)\n- 100% sodium hydroxide (110g)\n- Purified water\n- Crystallizing dish (glass pie dishes)\n- Pipette (10-15 mL preferred)\n- Thermometer\n- Heat-resistant media container with lid, 2000 mL\n- Stirring rod (300mm minimum)\n- Small USB powered fan\n- Naphtha (CAS 64742-49-0 or 68410-97-9) OR single isomer n-heptane >99% (CAS 142-82-5)\n\nWARNING: Heptane with mixed isomers is NOT recommended."
+  },
+  {
+    keywords: ["step","acidification","base","pull","freeze precipitat","evaporat","how to extract","extraction process","procedure","steps","yields","crystals","process","making"],
+    title: "Extraction — Step by Step",
+    content: "NAPHTHA EVAPORATION TEST: Place a few drops on a clean glass dish. If no residue remains after evaporation, it passes.\n\nSTEP 1 - ACIDIFICATION: Add 100g MHRB to mason jar with 5% vinegar (100-300 mL) to thick mud consistency. Freeze at -20C overnight, thaw 2-3 hours, repeat 3 times. Freeze/thaw produces 80-95% white crystals.\n\nExample yields (100g MHRB, 1% DMT):\n- 3 freeze/thaws: 0.750g + 0.220g + 0.030g = 1.00g total\n- 72hr vinegar soak: 0.250g + 0.600g + 0.175g = 1.00g total\n\nSTEP 2 - PREPARING THE BASE: 1000mL water in container. Slowly add 110g sodium hydroxide while stirring. Add 200g salt while hot. COMPLETELY COOL before proceeding.\n\nSTEP 3 - ADDING BARK TO BASE: Add bark/vinegar mix to NaOH/salt/water. Stir 1-2 minutes. Adjust temperature to exactly 20C (n-heptane: pull at 35-40C).\n\nSTEP 4 - NAPHTHA PULLS: Add 150mL naphtha at 20C. Shake gently 45-60 seconds. Wait 15 minutes for layers to separate. Pipette naphtha into pie dish. Pulls: 1st 150mL, 2nd 120mL, 3rd 90mL.\n\nSTEP 5 - FREEZE PRECIPITATING OR EVAPORATING:\nFreeze: Cover dish, freeze 6-12 hours, pour off naphtha, fan dry crystals (up to 48 hours). Scrape top layer first for whitest crystals.\nEvaporate: Fan in well-ventilated area until all naphtha evaporates (24-48 hours). Produces slightly more yellow crystals."
+  },
+  {
+    keywords: ["juice","pg","vg","propylene glycol","vegetable glycerin","mix","mixture","ratio","solubility","dissolve","1:1","1:2","1:3","1:4","filter","storage","store","dmt juice"],
+    title: "Making DMT-Juice",
+    content: "DMT dissolved in propylene glycol (PG) and vegetable glycerin (VG) for vape cartridges or sub-ohm tanks.\n\nSOLUBILITY: DMT is highly soluble in PG — up to 2,000mg dissolves in 1mL PG. DMT is NOT soluble in VG. Always dissolve DMT in PG first, then add VG.\n\nMIXTURE RECOMMENDATIONS:\n- Sub-ohm / RTA: 50% PG / 50% VG\n- 510 cartridges: 100% PG\n\nRATIO EXAMPLES (1mL, 50/50 PG/VG):\n1:1 = 500mg | 1:2 = 333mg | 1:3 = 250mg | 1:4 = 200mg\n1:5 = 170mg | 1:6 = 140mg | 1:7 = 125mg | 1:8 = 110mg\n\nWeight: 1mL PG = 1.04g | 1mL VG = 1.26g\n\nMIXING (2mL, 1:1, 100% PG): 1000mg DMT + 1mL PG. Allow 15 mins to dissolve. Filter with 13mm PTFE 1um syringe filter only if needed.\n\nFILTERING: Only needed if DMT is waxy/yellow or mix is cloudy. Clear mix does not need filtering.\n\nSTORAGE:\n- Cartridges: store inverted. Long-term: sealed zip-lock in freezer.\n- RTA: upright, cool dark place. Long-term: zip-lock in freezer.\n- Vials: best for long-term storage."
+  },
+  {
+    keywords: ["510","cartridge","cart","pod","battery","yocan","ccell","vape pen","watts","voltage","fill","filling","2:1","beginner"],
+    title: "510 Cartridges & Pods",
+    content: "510-threaded vape cartridges connect to standard vape batteries. Ideal for beginners, controlled doses, and MAOI-augmented sessions. Drawback: lack one-hit breakthrough power of sub-ohm tanks.\n\nMUST-KNOW:\n- 1mL carts fit 1.2mL total (wick absorbs some)\n- Max power ~9-10 watts on full-sized mod; start at 5 watts\n- Yocan Uni Pro: max setting fine (doesn't exceed 3.7V)\n- Formula: Wattage = Volts squared / Resistance (ohms)\n- Let newly filled carts saturate 15-20 mins before vaping\n- Keep cartridge upright when in use\n- Limit inhale to 6-7 seconds to protect wicks\n- Avoid Ccell Evo branded cartridges\n\nRECOMMENDED BATTERIES: Yocan Uni Pro, Yocan Kodo Pro, Ccell Palm Pro\n\nMAKING 2:1 CARTRIDGES: Use 1mL Ccell TH210 or Yocan Sticks Plus dual coil. Mix 800mg DMT with 0.4mL PG. Dissolve completely. Fill with syringe, wait 15-20 mins before vaping.\n\nPOD SYSTEMS: Most pods not suitable. Ccell Dart and Ccell Bellos work but require proprietary batteries."
+  },
+  {
+    keywords: ["sub ohm","sub-ohm","rta","rebuildable","tank","coil","clapton","wick","cotton","single coil","dual coil","hellvape","dead rabbit","geekvape","zeus","airflow","build","setup","watt","power"],
+    title: "Sub-Ohm Tanks (RTAs)",
+    content: "Rebuildable tank atomizers (RTAs) for advanced users. Capable of single-hit breakthroughs. Require technical skill to build.\n\nSINGLE-COIL IDEAL SETUP (Hellvape Dead Rabbit V3):\n- Any 50W mod\n- 3mm inner diameter, 6 turns of 26x2+36 fused Clapton\n- Wick: 3mm shoelace cotton\n- Juice: 1:3 (50% PG/50% VG)\n- Airflow closed 85-95%\n- Power: 18-24 watts (max ~4 watts per turn)\n- Hotter vapor = more intense effects\n\nDUAL-COIL IDEAL SETUP:\n- Any 50W mod | 3mm inner diameter, 5 turns of 26x2+36 fused Clapton\n- Wick: 3mm shoelace cotton\n- Juice: 1:4 or 1:6 (50% PG/50% VG)\n- Airflow closed 80-95%\n- Power: 30-40 watts\n- WARNING: Exercise extreme caution — very intense trips\n\nNON-REBUILDABLE (Geekvape Zeus):\nGood coils: Z0.15 XM, Z0.15, Z0.20\nNot recommended: Z0.25, Z0.40\nSettings: 50W+ mod, max 30-35 watts, toke 6-7 seconds, air inlet 80-95% closed."
+  },
+  {
+    keywords: ["e-mesh","emesh","mesh","rda","efficient","breakthrough","15mg","20 watts","50 watts","vandy vape","wotofo","cthulhu","steel mesh","king"],
+    title: "E-Mesh",
+    content: "E-Mesh is the most efficient DMT vaporization method — 'King of efficiency.' Breakthroughs with as little as 15mg. Most people would not vape more than 40mg.\n\nHOW TO USE:\n- Use Power Mode — mod capable of at least 50 watts\n- Install mesh in mushroom shape, flat as possible on top\n- Burn off residue at 30+ watts before first use\n- Start at 20 watts, inhaling very softly as soon as pressing power button\n- Use 150 or 200 steel mesh\n- More heat = more intense effects\n- Start with 10mg or less; 20-30mg for breakthrough\n- Aim for 7-10 second inhale, very softly\n\nDrawbacks: Hard to control intensity, difficult to source RDAs in USA.\n\nRecommended RDAs: Mesh Pro RDA, Vandy Vape Mesh RDA, Wotofo Profile RDA, Cthulhu Iris Mesh RDA.\n\nAlso ideal for vaporizing MAOI (harmine, harmaline, THH) at 30-40 watts.\nWARNING: Do NOT use MAOI when vaporizing DMT with E-mesh."
+  },
+  {
+    keywords: ["vapor genie","vaporgenie","pipe","torch","lighter","battery free","portable","convection","25mg"],
+    title: "Vapor Genie",
+    content: "Battery-free portable vaporizer using convection heating. Breakthroughs from as low as 25mg. Simple and ready anywhere without charging.\n\nPurchase at vaporgenie.com\n\nCan also vaporize MAOI (harmine, harmaline, THH).\n\nDrawbacks: Requires practice to master torch lighter technique and liquid pad placement. Trip intensity can fluctuate due to heating technique variations."
+  },
+  {
+    keywords: ["maoi","syrian rue","harmine","harmaline","thh","peganum harmala","harmala","combination","augment","intensify","extend","oral","dose","dosage","body weight","protocol","caution","warning","interaction","food","tyramine"],
+    title: "MAOI (Syrian Rue & Harmala Alkaloids)",
+    content: "Syrian rue (Peganum harmala) contains harmala alkaloids: harmine (~60%), harmaline (~30%), THH (~10%). These are reversible MAO-A inhibitors.\n\nEFFECTS ON DMT:\n- Harmine: intensifies DMT visuals 3-5x, extends experience 3-5x\n- Harmaline: heightens intensity 2-3x, prolongs 2-3x\n- THH: enhances visual clarity, extends effects 1.5-2x\n- Overall: transforms DMT's brief surge into a profound, enduring journey\n\nWARNING: MAOIs can interact dangerously with certain foods, medications, or substances. EXERCISE EXTREME CAUTION. Avoid tyramine-rich foods 24 hours before/after.\n\nSOURCES: harmalas.com | Syrian rue seeds: herbal stores, eBay, Amazon\n\nBEGINNER DOSAGES:\n- Syrian rue seeds: 250mg-1000mg (oral)\n- Harmine/Harmaline/THH: 25-100mg oral OR 10-40mg vaporized\n\nDOSAGE BY BODY WEIGHT:\n- Vaporized: 0.15-0.40mg per kg body weight\n- Oral: 0.3-1.2mg per kg body weight\n- Example (90kg): vaporized start = 13.5mg; max = 36mg\n\nADMINISTRATION:\n- Oral MAOI: wait 45-90 minutes before DMT\n- Vaporized MAOI: can add DMT immediately\n\nSYRIAN RUE SEEDS: Chew into mush, hold under tongue 5-20 mins before swallowing. First time: max 250mg.\n\nTESTING PROTOCOL:\n1. Take MAOI alone first, no DMT yet\n2. Avoid tyramine-rich foods 24 hrs before/after\n3. Wait 1-2 hrs (oral) or 30 mins (vaporized)\n4. Dizziness/nausea beyond mild = dose too high\n5. Wait 2-3 days between tests for MAOI to clear\n6. Only combine with DMT after confirming safe solo MAOI dose\n\nKEY TIPS: Always start low. 510 cartridges ideal for first MAOI session. Do NOT use MAOI with E-mesh."
+  }
+];
+
+var SUGGESTED_QUESTIONS = [
+  "What materials do I need to extract DMT?",
+  "How do I make DMT-juice for a vape cart?",
+  "What's the difference between freeze precipitation and evaporation?",
+  "How does MAOI affect a DMT experience?",
+  "What are the recommended settings for a sub-ohm tank?",
+  "How much DMT do I need for E-mesh?"
+];
+
+function searchGuide(query) {
+  var q = query.toLowerCase();
+  var words = q.split(/\s+/);
+  var best = null;
+  var bestScore = 0;
+
+  for (var i = 0; i < KNOWLEDGE.length; i++) {
+    var entry = KNOWLEDGE[i];
+    var score = 0;
+    for (var j = 0; j < entry.keywords.length; j++) {
+      var kw = entry.keywords[j];
+      if (q.indexOf(kw) !== -1) score += kw.split(" ").length * 2;
+    }
+    for (var w = 0; w < words.length; w++) {
+      var word = words[w];
+      if (word.length > 2) {
+        for (var k = 0; k < entry.keywords.length; k++) {
+          if (entry.keywords[k].indexOf(word) !== -1) score += 1;
+        }
+      }
+    }
+    if (score > bestScore) { bestScore = score; best = entry; }
+  }
+
+  if (!best || bestScore === 0) {
+    for (var i = 0; i < KNOWLEDGE.length; i++) {
+      var entry = KNOWLEDGE[i];
+      var contentLower = entry.content.toLowerCase();
+      var score = 0;
+      for (var w = 0; w < words.length; w++) {
+        if (words[w].length > 3 && contentLower.indexOf(words[w]) !== -1) score++;
+      }
+      if (score > bestScore) { bestScore = score; best = entry; }
+    }
+  }
+
+  if (best && bestScore > 0) {
+    return "Guide: " + best.title + "\n\n" + best.content;
+  }
+
+  return "I couldn't find that in the guide. The guide covers:\n\n- DMT overview & effects\n- Mimosa Hostilis (MHRB) sources\n- Extracting DMT (full step-by-step)\n- Making DMT-Juice (PG/VG ratios)\n- 510 Cartridges & Pods\n- Sub-Ohm Tanks (RTA builds)\n- E-Mesh technique\n- Vapor Genie\n- MAOI dosing & protocols\n\nTry asking about one of these topics!";
+}
+
+var grid = document.getElementById('suggestions-grid');
+for (var i = 0; i < SUGGESTED_QUESTIONS.length; i++) {
+  (function(q) {
+    var btn = document.createElement('button');
+    btn.className = 'suggestion-btn';
+    btn.textContent = q;
+    btn.onclick = function() { sendMessage(q); };
+    grid.appendChild(btn);
+  })(SUGGESTED_QUESTIONS[i]);
+}
+
+document.getElementById('user-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendMessage();
+});
+
+document.getElementById('send-btn').addEventListener('click', function() {
+  sendMessage();
+});
+
+function appendMessage(role, content) {
+  var chatWindow = document.getElementById('chat-window');
+  var row = document.createElement('div');
+  row.className = 'message-row ' + role;
+
+  if (role === 'assistant') {
+    var av = document.createElement('div');
+    av.className = 'avatar assistant';
+    av.textContent = String.fromCharCode(9672);
+    row.appendChild(av);
+  }
+
+  var bubble = document.createElement('div');
+  bubble.className = 'bubble ' + role;
+  bubble.textContent = content;
+  row.appendChild(bubble);
+
+  if (role === 'user') {
+    var av2 = document.createElement('div');
+    av2.className = 'avatar user';
+    av2.textContent = String.fromCharCode(9654);
+    row.appendChild(av2);
+  }
+
+  chatWindow.appendChild(row);
+  row.scrollIntoView({ behavior: 'smooth' });
+}
+
+function sendMessage(text) {
+  var input = document.getElementById('user-input');
+  var userText = text || input.value.trim();
+  if (!userText) return;
+  input.value = '';
+
+  var suggestions = document.getElementById('suggestions');
+  if (suggestions) suggestions.parentNode.removeChild(suggestions);
+
+  appendMessage('user', userText);
+
+  setTimeout(function() {
+    var reply = searchGuide(userText);
+    appendMessage('assistant', reply);
+  }, 300);
+}
+</script>
+</body>
+</html>
