@@ -1,0 +1,533 @@
+import { useState, useRef, useEffect } from “react”;
+
+const SYSTEM_PROMPT = `You are the Hyperspace Guide, an AI assistant with deep expertise in the content of “The Hitchhiker’s Guide to Hyperspace” — a guide about N,N-Dimethyltryptamine (DMT). You answer questions ONLY based on the information in this guide. Be helpful, precise, and informative. If a question goes beyond the guide’s content, say so clearly.
+
+Here is the full content of the guide you are trained on:
+
+=== THE HITCHHIKER’S GUIDE TO HYPERSPACE ===
+
+LEGAL DISCLAIMER: The information in this book is provided solely for educational and informational purposes. The author and publisher do not advocate, encourage, or condone the production, possession, distribution, or use of DMT or any controlled substances.
+
+TABLE OF CONTENTS: N,N-Dimethyltryptamine, Mimosa Hostilis, Extracting DMT, Making DMT-Juice, 510 Cartridges and Pods, Sub-Ohm Tanks, E-mesh, Vapor Genie, MAOI
+
+— N,N-DIMETHYLTRYPTAMINE —
+DMT is a psychedelic alkaloid that induces profound altered states. A tryptamine similar to serotonin, DMT binds to 5-HT2A receptors, conjuring vivid visions of geometric shapes, otherworldly entities, and alien landscapes — sometimes resembling near-death experiences. When inhaled as vapor, it surges across the blood-brain barrier in seconds, peaking within five minutes and usually fading by fifteen. Many users report experiences they interpret as accessing alternate dimensions. Users frequently describe consistent encounters with intelligent “entities” (machine elves, insectoid beings, reptiles, or aliens). DMT has been used in indigenous Amazonian cultures for centuries, brewed as ayahuasca for spiritual ceremonies.
+
+— MIMOSA HOSTILIS —
+Mimosa hostilis root bark (MHRB) is the primary source for DMT extraction. It has a DMT concentration of 1-2%, surpassing alternatives like Acacia confusa or Psychotria viridis. MHRB is available powdered, shredded, or whole bark. Recommended suppliers: PrimeBark (primebark.com) and MimosaRoot (mimosaroot.com). The extraction uses powdered bark; shredded bark can be ground at home or blended after acidification.
+
+— EXTRACTING DMT —
+Required materials: Powdered MHRB (100g), safety equipment (nitrile gloves, eye protection), regular white 5% vinegar (200-300 mL), small mason jar, small funnel, regular table salt/sodium chloride (200g), 100% sodium hydroxide (110g), purified water, crystallizing dish (glass pie dishes), pipette (10-15 mL preferred), thermometer, heat-resistant media container with lid 2000 mL, stirring rod (300mm minimum), small USB powered fan, naphtha (CAS 64742-49-0 or CAS 68410-97-9) or single isomer n-heptane >99% (CAS 142-82-5). Heptane with mixed isomers is NOT recommended.
+
+NAPHTHA EVAPORATION TEST: Place a few drops on a clean glass dish, allow to evaporate completely at room temperature. If no residue remains, it passes.
+
+STEP 1 - ACIDIFICATION: Add 100g powdered MHRB to mason jar, add 5% white vinegar (100-300 mL) to achieve thick mud consistency. Freeze at -20°C or colder overnight, thaw at room temperature for 2-3 hours, repeat 3 times (freeze/thaw method). Alternative: let sit at room temperature 72 hours (requires 3 naphtha pulls vs 2 with freeze/thaw). Heating to 50-60°C for 1-2 hours is another alternative but can cause more yellow crystals. Freeze/thaw produces 80-95% white crystals; room temp soak produces 70-85% white crystals.
+
+Example yields from 100g MHRB with 1% DMT concentration:
+
+- 3 freeze/thaws: 1st pull 0.750g, 2nd pull 0.220g, 3rd pull 0.030g, total 1.00g
+- 72hr vinegar soak: 1st pull 0.250g, 2nd pull 0.600g, 3rd pull 0.175g, total 1.00g
+
+STEP 2 - PREPARING THE BASE: Fill 2000mL media container with 1000mL water, slowly add 110g sodium hydroxide while stirring. Wear nitrile gloves and eye protection! While still hot, add 200g salt. Allow to COMPLETELY COOL before proceeding.
+
+STEP 3 - ADDING BARK TO BASE: Add bark/vinegar mix to NaOH/salt/water mix using funnel. Stir 1-2 minutes. Adjust temperature to exactly 20°C. Pulling at higher than 20°C results in less white DMT. If using n-heptane instead of naphtha, pull at 35-40°C.
+
+STEP 4 - NAPHTHA PULLS: Add 150mL naphtha at 20°C. Gently shake 45-60 seconds. Wait up to 15 minutes for layers to fully separate. Carefully pipette naphtha into pie dish. Pull amounts: 1st pull 150mL, 2nd pull 120mL, 3rd pull 90mL. Only 2 pulls needed with freeze/thaw method.
+
+STEP 5 - FREEZE PRECIPITATING OR EVAPORATING:
+Freeze precipitating: Cover dish, freeze 6-12 hours, pour off naphtha, fan dry crystals (few hours to 48 hours). Scrape top layer first for whitest crystals.
+Evaporating: Fan in well-ventilated area until all naphtha evaporates, keep fanning until dry (24-48 hours). Produces slightly more yellow crystals than freeze precipitation.
+
+— MAKING DMT-JUICE —
+DMT dissolved in propylene glycol (PG) and vegetable glycerin (VG) for use in vape cartridges or sub-ohm tanks. Advantages: precise dose control, repeatable trip intensity, convenience, portability, discretion. Ideal for extended or MAOI-augmented sessions.
+
+PG/VG SOLUBILITY: DMT is highly soluble in PG — up to 2,000mg DMT fully dissolves in 1mL PG at room temperature. DMT is effectively NOT soluble in VG at room temperature. Must dissolve DMT in PG first, then add VG.
+
+MIXTURE RECOMMENDATIONS:
+
+- Sub-ohm rebuildable atomizers: start with 50% PG / 50% VG
+- 510 vape cartridges: recommend 100% PG mix
+
+RATIO EXAMPLES (1mL, 50% PG / 50% VG):
+1:1 = 500mg DMT, 0.25mL PG, 0.25mL VG
+1:2 = 333mg DMT, 0.33mL PG, 0.33mL VG
+1:3 = 250mg DMT, 0.38mL PG, 0.38mL VG
+1:4 = 200mg DMT, 0.40mL PG, 0.40mL VG
+1:5 = 170mg DMT, 0.42mL PG, 0.42mL VG
+1:6 = 140mg DMT, 0.43mL PG, 0.43mL VG
+1:7 = 125mg DMT, 0.44mL PG, 0.44mL VG
+1:8 = 110mg DMT, 0.45mL PG, 0.45mL VG
+1:9 = 100mg DMT, 0.45mL PG, 0.45mL VG
+1:10 = 90mg DMT, 0.46mL PG, 0.46mL VG
+Weight reference: 1mL PG = 1.04g; 1mL VG = 1.26g
+
+MIXING PROCEDURE (2mL, 1:1, 100% PG): Place 1000mg DMT in 5mL vial, add 1mL PG, allow up to 15 minutes to dissolve, stir as needed. Filter with 13mm PTFE 1µm syringe filter only if needed.
+
+MIXING PROCEDURE (4mL, 1:3, 50% PG/50% VG): Place 1000mg DMT in 5mL vial, add 1.5mL PG, dissolve 15 mins. Filter if needed before adding VG. Add 1.5mL VG.
+
+MIXING PROCEDURE (5mL, 1:4, 50% PG/50% VG): Place 1000mg DMT in 5mL vial, add 2.0mL PG, dissolve 15 mins. Filter if needed. Add 2.0mL VG.
+
+FILTERING: Only necessary if using waxy yellow DMT. If PG/DMT mix shows cloudiness, filter it. Clear mix (even yellow tint) doesn’t require filtering. Use 13mm PTFE 1µm syringe filter. Don’t press too hard on plunger.
+
+STORAGE:
+
+- Cartridges: store inverted (mouthpiece down). For >1 month storage, sealed zip-lock bag inverted in freezer.
+- RTA: store upright in cool dark place. Long-term: sealed zip-lock in freezer, ideally remove juice to vial first.
+- Vials: best for long-term storage. Cool dark place short-term; sealed zip-lock in freezer long-term.
+
+— 510 CARTRIDGES AND PODS —
+510-threaded vape cartridges connect to standard vape batteries. Popular due to ease of use, portability, plug-and-play design. Ideal for controlled smaller doses, beginners, and MAOI-augmented sessions. Drawbacks: lack one-hit breakthrough power and smoothness of sub-ohm tanks.
+
+MUST-KNOW:
+
+- 1mL carts fit 1.2mL total (wick absorbs some)
+- Max power ~9-10 watts on full-sized mod; start at 5 watts
+- For pen-style batteries like Yocan Uni Pro, max setting is fine (doesn’t exceed 3.7V)
+- Formula: Wattage = Volts² ÷ Resistance (Ω)
+- Let newly filled carts saturate 15-20 mins before vaping
+- Keep cartridge upright when in use and between puffs
+- Stop when DMT-juice level is critically low near intake ports
+- Limit inhale to 6-7 seconds to protect wicks
+- Most carts good for at least 2-3mL of 1:1 mix
+- Avoid Ccell Evo branded cartridges
+
+BATTERIES: Yocan Uni Pro, Yocan Kodo Pro, Ccell Palm Pro
+
+MAKING 2:1 CARTRIDGES: Use 1mL Ccell TH210 cartridge or Yocan Sticks Plus dual coil. Mix 800mg DMT with 0.4mL PG. Dissolve completely (armpit trick to warm up, or place vial in bowl of hot water if room temp below 20°C). Suck juice with syringe, fill cartridge, wait 15-20 mins before vaping.
+
+POD SYSTEMS: Most pods not suitable — wicks burn out quickly. Ccell Dart and Ccell Bellos use same coils as Ccell TH210 and work fine, but require proprietary batteries and cost more.
+
+— SUB-OHM TANKS —
+Rebuildable tank atomizers (RTAs) for advanced users. Capable of single-hit breakthroughs. Require technical skill to build and maintain.
+
+SINGLE-COIL IDEAL SETUP (Hellvape Dead Rabbit V3):
+
+- Any 50W mod (author uses Thelema Solo DNA100c)
+- 3mm inner diameter, 6 turns of 26x2+36 fused Clapton
+- Preferred wick: 3mm shoelace cotton
+- Preferred juice mix: 1:3 (50% PG/50% VG)
+- Airflow closed 85-95%
+- Power Mode: 18-24 watts
+- Max ~4 watts per turn
+- Hotter vapor = more intense effects and efficiency
+
+DUAL-COIL IDEAL SETUP:
+
+- Any 50W mod
+- 3mm inner diameter, 5 turns of 26x2+36 fused Clapton
+- Preferred wick: 3mm shoelace cotton
+- Preferred juice mix: 1:4 or 1:6 (50% PG/50% VG)
+- Airflow closed 80-95%
+- Power Mode: 30-40 watts
+- Max ~4 watts per turn
+- Inhale harder than single coil for max efficiency
+- Exercise extreme caution — double heating surface means potentially very intense trips
+
+NON-REBUILDABLE SUB-OHM (Geekvape Zeus with Z series coils):
+Recommended coils: Z0.15 XM (Yes), Z0.15 (Yes), Z0.20 (Yes), Z0.25 (No), Z0.40 (No)
+Settings: 50W+ capable mod; max 30-35 watts; limit toke to 6-7 seconds; juice ratio 1:2 or 1:3 with 50% PG/50%VG or 60% PG/40% VG; keep air inlet 80-95% closed; don’t overfill.
+Note: Author recommends RTAs over non-rebuildables due to easier wick burn and leaking.
+
+— E-MESH —
+Highly efficient at vaporizing DMT. Can deliver breakthroughs with as little as 15mg. Most people would not vape more than 40mg. “King of efficiency.”
+
+Using E-mesh:
+
+- Use Power Mode, mod capable of at least 50 watts
+- Mushroom shape when installing mesh, as flat as possible on top
+- Start at 20 watts, inhaling very softly as soon as pressing power button
+- Use 150 or 200 steel mesh (generic or Vandy Vape mesh rolls)
+- Burn off residue at 30+ watts before first use
+- Feel heat from vapor — more heat = more intense effects
+- Start with 10mg or less until mastering technique; 20-30mg for breakthrough
+- Aim for 7-10 second inhale, inhaling very softly
+
+Drawbacks: Hard to control trip intensity, difficult to source RDAs in USA, one-dose-at-a-time limitation.
+Recommended RDAs: Mesh Pro RDA, Vandy Vape Mesh RDA, Wotofo Profile RDA, Cthulhu Iris Mesh RDA.
+Also ideal for vaporizing MAOI (harmine, harmaline, THH) at 30-40 watts. Do NOT use MAOI when vaporizing DMT with E-mesh due to overwhelming intensity.
+
+— VAPOR GENIE —
+Battery-free portable vaporizer. Convection heating. Breakthroughs from as low as 25mg. Simple and ready anywhere without charging. Purchase at vaporgenie.com.
+Can also vaporize MAOI (harmine, harmaline, THH).
+Drawbacks: Requires practice to master torch lighter technique and liquid pad placement; trip intensity can fluctuate due to heating technique variations.
+
+— MAOI —
+Syrian rue (Peganum harmala) contains harmala alkaloids: harmine (~60%), harmaline (~30%), tetrahydroharmine/THH (~10%). These are reversible MAO-A inhibitors.
+
+Effects of harmala alkaloids on DMT:
+
+- Harmine: intensifies DMT visuals 3-5x and extends experience 3-5x
+- Harmaline: heightens intensity 2-3x, prolongs 2-3x
+- THH: enhances visual clarity, extends effects 1.5-2x; synergizes best with harmine at 1:1 ratio
+- Overall: transforms DMT’s brief surge into a profound, enduring journey
+
+CAUTION: Reversible MAOIs can still interact dangerously with certain foods, medications, or substances affecting monoamine levels. EXERCISE EXTREME CAUTION.
+
+SOURCES: Harmine, harmaline, THH, harmine/harmaline hydrochloride from harmalas.com. Syrian rue seeds from herbal stores, eBay, Amazon.
+
+BEGINNER DOSAGES FOR MAOI:
+
+- Syrian rue seeds: 250mg-1000mg (oral)
+- Harmine hydrochloride: 25-100mg (oral, not suitable for vaporizing)
+- Harmine: 25-100mg (oral) or 10-40mg vaporized
+- Harmaline: 25-100mg (oral) or 10-40mg vaporized
+- THH: 25-100mg (oral) or 10-40mg vaporized
+
+DOSAGE BY BODY WEIGHT:
+
+- Syrian rue seeds (chewing): 3-10mg per kg body weight
+- Vaporized: 0.15-0.40mg per kg body weight
+- Oral: 0.3-1.2mg per kg body weight
+- Example for 90kg person: vaporized starting dose = 0.15 × 90 = 13.5mg; max = 0.40 × 90 = 36mg
+
+ADMINISTRATION: Oral MAOI: wait 45-90 minutes before adding DMT. Vaporized MAOI: can add DMT immediately.
+
+SYRIAN RUE SEEDS: Chew into fine mush, hold under tongue 5-20 minutes before swallowing. Start with no more than 250mg of rue seeds for first time.
+
+TESTING MAOI PROTOCOL:
+
+1. Select MAOI, prepare test dose
+1. Take MAOI alone, avoid tyramine-rich foods 24 hours before/after
+1. Wait 1-2 hours (oral) or 30 minutes (vaporized), observe body response
+1. Dizziness or nausea beyond mild levels = dose too high
+1. Record dose and effects in notebook
+1. Wait 2-3 days between tests for MAOI to clear
+1. Repeat solo testing until dose feels comfortable
+1. Only after confirming safe MAOI dose, combine with very low DMT amount
+1. If issues arise, reassess MAOI solo before retrying. Do not rush.
+
+KEY TIPS: Always start at low end. 510 cartridges are ideal for first MAOI-augmented session. Do NOT use MAOI when vaporizing DMT with E-mesh. Nausea = lower the dose.
+
+=== END OF GUIDE ===
+
+When answering, be specific and reference exact details from the guide. If asked about something not in the guide, clearly state that it falls outside the scope of this guide.`;
+
+const SUGGESTED_QUESTIONS = [
+“What materials do I need to extract DMT?”,
+“How do I make DMT-juice for a vape cart?”,
+“What’s the difference between freeze precipitation and evaporation?”,
+“How does MAOI affect a DMT experience?”,
+“What are the recommended settings for a sub-ohm tank?”,
+“How much DMT do I need for E-mesh?”,
+];
+
+export default function HyperspaceGuide() {
+const [messages, setMessages] = useState([]);
+const [input, setInput] = useState(””);
+const [loading, setLoading] = useState(false);
+const messagesEndRef = useRef(null);
+const inputRef = useRef(null);
+
+useEffect(() => {
+messagesEndRef.current?.scrollIntoView({ behavior: “smooth” });
+}, [messages, loading]);
+
+async function sendMessage(text) {
+const userText = text || input.trim();
+if (!userText || loading) return;
+setInput(””);
+
+```
+const newMessages = [...messages, { role: "user", content: userText }];
+setMessages(newMessages);
+setLoading(true);
+
+try {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: SYSTEM_PROMPT,
+      messages: newMessages,
+    }),
+  });
+
+  const data = await response.json();
+  const reply = data.content?.map(b => b.text || "").join("") || "No response.";
+  setMessages([...newMessages, { role: "assistant", content: reply }]);
+} catch (err) {
+  setMessages([...newMessages, { role: "assistant", content: "Connection error. Please try again." }]);
+} finally {
+  setLoading(false);
+}
+```
+
+}
+
+return (
+<div style={{
+minHeight: “100vh”,
+background: “#050510”,
+fontFamily: “‘Courier New’, monospace”,
+display: “flex”,
+flexDirection: “column”,
+alignItems: “center”,
+padding: “0”,
+position: “relative”,
+overflow: “hidden”,
+}}>
+{/* Starfield */}
+<div style={{
+position: “fixed”, inset: 0, zIndex: 0,
+background: “radial-gradient(ellipse at 20% 50%, #0a0a2e 0%, #050510 50%, #000 100%)”,
+pointerEvents: “none”,
+}} />
+<div style={{
+position: “fixed”, inset: 0, zIndex: 0, pointerEvents: “none”,
+backgroundImage: `radial-gradient(1px 1px at 10% 15%, rgba(180,140,255,0.6) 0%, transparent 100%), radial-gradient(1px 1px at 30% 5%, rgba(140,180,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 60% 25%, rgba(200,160,255,0.7) 0%, transparent 100%), radial-gradient(1px 1px at 80% 10%, rgba(160,200,255,0.4) 0%, transparent 100%), radial-gradient(1.5px 1.5px at 45% 80%, rgba(180,140,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 90% 70%, rgba(140,180,255,0.6) 0%, transparent 100%), radial-gradient(2px 2px at 15% 90%, rgba(200,160,255,0.3) 0%, transparent 100%), radial-gradient(1px 1px at 70% 60%, rgba(160,200,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 5% 45%, rgba(180,140,255,0.4) 0%, transparent 100%), radial-gradient(1.5px 1.5px at 55% 50%, rgba(220,180,255,0.6) 0%, transparent 100%)`,
+}} />
+
+```
+  {/* Header */}
+  <div style={{
+    width: "100%", maxWidth: 760, zIndex: 10,
+    padding: "28px 24px 0",
+    textAlign: "center",
+  }}>
+    <div style={{
+      display: "inline-block",
+      fontSize: 11,
+      letterSpacing: "0.25em",
+      color: "#7b5ea7",
+      textTransform: "uppercase",
+      marginBottom: 8,
+      fontWeight: 700,
+    }}>
+      ◈ DON'T PANIC ◈
+    </div>
+    <h1 style={{
+      fontSize: "clamp(22px, 5vw, 36px)",
+      fontWeight: 900,
+      margin: "0 0 6px",
+      background: "linear-gradient(135deg, #c8a8ff 0%, #7b9fff 50%, #e8d0ff 100%)",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      letterSpacing: "0.05em",
+      lineHeight: 1.1,
+    }}>
+      THE HITCHHIKER'S GUIDE
+    </h1>
+    <h2 style={{
+      fontSize: "clamp(12px, 2.5vw, 16px)",
+      fontWeight: 400,
+      color: "#6a5a8a",
+      letterSpacing: "0.3em",
+      margin: "0 0 20px",
+      textTransform: "uppercase",
+    }}>
+      to Hyperspace
+    </h2>
+    <div style={{
+      height: 1,
+      background: "linear-gradient(90deg, transparent, #3a2a5a, #7b5ea7, #3a2a5a, transparent)",
+      marginBottom: 20,
+    }} />
+  </div>
+
+  {/* Chat window */}
+  <div style={{
+    width: "100%", maxWidth: 760, zIndex: 10,
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    padding: "0 16px",
+    gap: 12,
+  }}>
+    {messages.length === 0 && (
+      <div style={{ marginTop: 16 }}>
+        <p style={{
+          color: "#6a5aaa",
+          textAlign: "center",
+          fontSize: 13,
+          marginBottom: 16,
+          letterSpacing: "0.05em",
+        }}>
+          Ask anything about the guide — extraction, vaping methods, MAOI, dosing, and more.
+        </p>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+          gap: 8,
+        }}>
+          {SUGGESTED_QUESTIONS.map((q, i) => (
+            <button key={i} onClick={() => sendMessage(q)} style={{
+              background: "rgba(60,40,100,0.25)",
+              border: "1px solid rgba(120,80,200,0.3)",
+              borderRadius: 8,
+              color: "#b090e0",
+              padding: "10px 14px",
+              fontSize: 12,
+              cursor: "pointer",
+              textAlign: "left",
+              lineHeight: 1.4,
+              fontFamily: "'Courier New', monospace",
+              transition: "all 0.2s",
+              letterSpacing: "0.02em",
+            }}
+              onMouseEnter={e => {
+                e.target.style.background = "rgba(80,50,140,0.4)";
+                e.target.style.borderColor = "rgba(160,100,255,0.5)";
+                e.target.style.color = "#d0b0ff";
+              }}
+              onMouseLeave={e => {
+                e.target.style.background = "rgba(60,40,100,0.25)";
+                e.target.style.borderColor = "rgba(120,80,200,0.3)";
+                e.target.style.color = "#b090e0";
+              }}
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div style={{
+      display: "flex", flexDirection: "column", gap: 12,
+      minHeight: messages.length > 0 ? "40vh" : 0,
+    }}>
+      {messages.map((m, i) => (
+        <div key={i} style={{
+          display: "flex",
+          justifyContent: m.role === "user" ? "flex-end" : "flex-start",
+        }}>
+          {m.role === "assistant" && (
+            <div style={{
+              width: 28, height: 28, borderRadius: "50%",
+              background: "linear-gradient(135deg, #3a1a6a, #7b5ea7)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 12, marginRight: 8, flexShrink: 0, marginTop: 4,
+              border: "1px solid rgba(160,100,255,0.4)",
+            }}>◈</div>
+          )}
+          <div style={{
+            maxWidth: "80%",
+            padding: "12px 16px",
+            borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+            background: m.role === "user"
+              ? "linear-gradient(135deg, rgba(80,50,140,0.6), rgba(60,30,120,0.5))"
+              : "rgba(20,15,40,0.7)",
+            border: m.role === "user"
+              ? "1px solid rgba(160,100,255,0.35)"
+              : "1px solid rgba(80,60,130,0.4)",
+            color: m.role === "user" ? "#e0d0ff" : "#c8b8e8",
+            fontSize: 13,
+            lineHeight: 1.7,
+            letterSpacing: "0.02em",
+            whiteSpace: "pre-wrap",
+          }}>
+            {m.content}
+          </div>
+          {m.role === "user" && (
+            <div style={{
+              width: 28, height: 28, borderRadius: "50%",
+              background: "linear-gradient(135deg, #1a1040, #3a2060)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 11, marginLeft: 8, flexShrink: 0, marginTop: 4,
+              border: "1px solid rgba(100,70,180,0.4)", color: "#8060c0",
+            }}>▸</div>
+          )}
+        </div>
+      ))}
+
+      {loading && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: "50%",
+            background: "linear-gradient(135deg, #3a1a6a, #7b5ea7)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 12, border: "1px solid rgba(160,100,255,0.4)",
+            flexShrink: 0,
+          }}>◈</div>
+          <div style={{
+            padding: "12px 18px",
+            borderRadius: "16px 16px 16px 4px",
+            background: "rgba(20,15,40,0.7)",
+            border: "1px solid rgba(80,60,130,0.4)",
+            display: "flex", gap: 5, alignItems: "center",
+          }}>
+            {[0, 1, 2].map(i => (
+              <div key={i} style={{
+                width: 6, height: 6, borderRadius: "50%",
+                background: "#7b5ea7",
+                animation: `pulse 1.4s ease-in-out ${i * 0.2}s infinite`,
+              }} />
+            ))}
+          </div>
+        </div>
+      )}
+      <div ref={messagesEndRef} />
+    </div>
+  </div>
+
+  {/* Input area */}
+  <div style={{
+    width: "100%", maxWidth: 760, zIndex: 10,
+    padding: "16px",
+    position: "sticky", bottom: 0,
+    background: "linear-gradient(to top, #050510 60%, transparent)",
+  }}>
+    <div style={{
+      display: "flex", gap: 10,
+      background: "rgba(20,15,40,0.85)",
+      border: "1px solid rgba(120,80,200,0.4)",
+      borderRadius: 12,
+      padding: "4px 4px 4px 16px",
+      backdropFilter: "blur(10px)",
+    }}>
+      <input
+        ref={inputRef}
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
+        placeholder="Ask about the guide..."
+        style={{
+          flex: 1, background: "transparent", border: "none", outline: "none",
+          color: "#d0c0f0", fontSize: 13, fontFamily: "'Courier New', monospace",
+          letterSpacing: "0.02em",
+        }}
+        disabled={loading}
+      />
+      <button
+        onClick={() => sendMessage()}
+        disabled={loading || !input.trim()}
+        style={{
+          background: loading || !input.trim()
+            ? "rgba(60,40,100,0.3)"
+            : "linear-gradient(135deg, #5a3a9a, #8b5ea7)",
+          border: "none",
+          borderRadius: 9,
+          color: loading || !input.trim() ? "#4a3a6a" : "#e0d0ff",
+          padding: "10px 18px",
+          fontSize: 13,
+          cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+          fontFamily: "'Courier New', monospace",
+          letterSpacing: "0.05em",
+          transition: "all 0.2s",
+          whiteSpace: "nowrap",
+        }}
+      >
+        LAUNCH ▸
+      </button>
+    </div>
+    <div style={{
+      textAlign: "center", marginTop: 10, fontSize: 10,
+      color: "#3a2a5a", letterSpacing: "0.15em",
+    }}>
+      FOR EDUCATIONAL & INFORMATIONAL PURPOSES ONLY
+    </div>
+  </div>
+
+  <style>{`
+    @keyframes pulse {
+      0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1.2); }
+    }
+  `}</style>
+</div>
+```
+
+);
+}
